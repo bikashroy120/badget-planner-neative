@@ -2,15 +2,13 @@ import { StyleSheet, Text, View } from "react-native";
 import services from "../../utils/services";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
+import { supabase } from "../../utils/SupabaseConfig";
+import { client } from "../../utils/KindeConfig";
 
 export default function Page() {
 
   const router = useRouter()
-
-
-  useEffect(()=>{
-    isLogin()
-  },[])
+ 
 
 
   const isLogin = async()=>{
@@ -22,6 +20,19 @@ export default function Page() {
       router.push("/login")
     }
   }
+
+
+  const getCategory = async()=>{
+    const user = await client.getUserDetails()
+    const {data,error} = await supabase.from("Category").select("*").eq("created_by",user.email)
+    console.log(data)
+  }
+
+
+  useEffect(()=>{
+    isLogin()
+    getCategory()
+  },[])
 
   return (
     <View style={styles.container}>
