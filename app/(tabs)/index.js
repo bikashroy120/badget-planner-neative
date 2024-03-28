@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { supabase } from "../../utils/SupabaseConfig";
 import { client } from "../../utils/KindeConfig";
+import Header from "../../component/Header";
 
 export default function Page() {
 
@@ -36,10 +37,9 @@ export default function Page() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.main}>
-        <Text style={styles.title}>Hello World</Text>
-        <Text style={styles.subtitle}>This is the first page of your app.</Text>
-      </View>
+        <View className=" bg-blue-500 h-[250px] w-full">
+          <Header />
+        </View>
     </View>
   );
 }
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    padding: 24,
+    paddingTop: 32,
   },
   main: {
     flex: 1,
