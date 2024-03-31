@@ -22,7 +22,7 @@ export default function Page() {
     const user = await client.getUserDetails();
     const { data, error } = await supabase
       .from("Category")
-      .select("*")
+      .select("*,CategoryItems(*)")
       .eq("created_by", user.email);
     setCategory(data);
   };
