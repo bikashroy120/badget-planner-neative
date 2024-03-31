@@ -1,15 +1,31 @@
 import { StyleSheet, Text, View } from "react-native";
 import services from "../../utils/services";
 import { Link, useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../utils/SupabaseConfig";
 import { client } from "../../utils/KindeConfig";
 import Header from "../../component/Header";
 import CircularChart from "../../component/CircularChart";
 import { Ionicons } from "@expo/vector-icons";
+import { useGetCategory } from "../../hooks/useGetCategory";
+import CategoryList from "../../component/CategoryList";
 
 export default function Page() {
   const router = useRouter();
+  const [category, setCategory] = useState();
+
+  useEffect(() => {
+    getCategory();
+  }, []);
+
+  const getCategory = async () => {
+    const user = await client.getUserDetails();
+    const { data, error } = await supabase
+      .from("Category")
+      .select("*")
+      .eq("created_by", user.email);
+    setCategory(data);
+  };
 
   const isLogin = async () => {
     const login = await services.getData("login");
@@ -21,18 +37,10 @@ export default function Page() {
     }
   };
 
-  const getCategory = async () => {
-    const user = await client.getUserDetails();
-    const { data, error } = await supabase
-      .from("Category")
-      .select("*")
-      .eq("created_by", user.email);
-    console.log(data);
-  };
+  console.log(category)
 
   useEffect(() => {
     isLogin();
-    getCategory();
   }, []);
 
   return (
@@ -40,6 +48,7 @@ export default function Page() {
       <View className=" bg-blue-500 h-[200px] w-full">
         <Header />
         <CircularChart />
+        <CategoryList category={category}/>
       </View>
       <View className=" absolute bottom-4 right-3">
         <Link href={"/add-category"}>
