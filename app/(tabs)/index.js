@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import services from "../../utils/services";
 import { Link, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -13,18 +13,21 @@ import CategoryList from "../../component/CategoryList";
 export default function Page() {
   const router = useRouter();
   const [category, setCategory] = useState();
+  const [loading,setLoading]=useState(false)
 
   useEffect(() => {
     getCategory();
   }, []);
 
   const getCategory = async () => {
+    setLoading(true)
     const user = await client.getUserDetails();
     const { data, error } = await supabase
       .from("Category")
       .select("*,CategoryItems(*)")
       .eq("created_by", user.email);
     setCategory(data);
+    data&&setLoading(false)
   };
 
   const isLogin = async () => {
@@ -37,7 +40,7 @@ export default function Page() {
     }
   };
 
-  console.log(category)
+  console.log(category);
 
   useEffect(() => {
     isLogin();
@@ -45,10 +48,17 @@ export default function Page() {
 
   return (
     <View style={styles.container}>
-      <View className=" bg-blue-500 h-[200px] w-full">
-        <Header />
-        <CircularChart />
-        <CategoryList category={category}/>
+      <View className=" w-full">
+        <ScrollView refreshControl={
+          <RefreshControl 
+            onRefresh={()=>getCategory()}
+            refreshing={loading}
+          />
+        }>
+          <Header />
+          <CircularChart />
+          <CategoryList category={category} />
+        </ScrollView>
       </View>
       <View className=" absolute bottom-4 right-3">
         <Link href={"/add-category"}>
@@ -58,7 +68,7 @@ export default function Page() {
     </View>
   );
 }
-
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -7,7 +7,7 @@ const Header = () => {
   const user = useGetUser();
   console.log(user);
   return (
-    <View className="p-5 flex items-center flex-row justify-between">
+    <View className="p-5 flex items-start bg-blue-500 h-[200px] flex-row justify-between">
       <View className=" flex flex-row  items-center gap-3">
         <Image
           source={{ uri: user?.picture }}

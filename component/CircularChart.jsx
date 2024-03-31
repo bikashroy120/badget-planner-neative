@@ -8,7 +8,7 @@ const CircularChart = () => {
   const sliceColor = ["#fbd203", "#ffb300", "#ff9100", "#ff6c00", "#ff3c00"];
 
   return (
-    <View className=" bg-white mx-5 rounded-xl p-5">
+    <View className=" bg-white mx-5 rounded-xl p-5 mt-[-100px]">
       <View className=" flex items-center flex-row mb-4">
         <Text className=" text-[18px] text-gray-500 font-medium">Total Estimate :</Text>
         <Text className=" text-[17px] font-bold mt-1 ml-1">0$</Text>
