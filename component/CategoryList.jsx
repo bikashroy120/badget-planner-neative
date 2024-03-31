@@ -1,13 +1,28 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
+import { useRouter } from "expo-router";
 
 const CategoryList = ({ category }) => {
+
+  const router = useRouter()
+
+  const routeHandel = (category)=>{
+    router.push({
+      pathname:"category-details",
+      params:{
+        category:category?.id
+      }
+    })
+  }
+
+
   return (
     <View className=" p-5">
       <Text className=" text-[20px] font-bold">Latest Budget</Text>
       <View>
         {category?.map((item, index) => (
           <TouchableOpacity
+            onPress={()=>routeHandel(item)}
             key={index}
             className=" bg-white shadow-sm mt-3 flex flex-row items-center p-3 rounded-xl"
           >
