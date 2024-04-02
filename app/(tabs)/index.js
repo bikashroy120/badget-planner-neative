@@ -7,7 +7,6 @@ import { client } from "../../utils/KindeConfig";
 import Header from "../../component/Header";
 import CircularChart from "../../component/CircularChart";
 import { Ionicons } from "@expo/vector-icons";
-import { useGetCategory } from "../../hooks/useGetCategory";
 import CategoryList from "../../component/CategoryList";
 
 export default function Page() {

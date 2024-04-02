@@ -1,22 +1,43 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import { supabase } from "../utils/SupabaseConfig";
 import { Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from "@expo/vector-icons";
 
 const CategoryDetails = () => {
   const { category } = useLocalSearchParams();
   const [categoryItem, setCategoryItem] = useState();
   const [loading, setLoading] = useState(false);
+  const [totalCost, setTotalCost] = useState(0);
+  const [persen, setPersen] = useState(0);
 
-  console.log("category", categoryItem);
+  console.log("category", totalCost);
 
   useEffect(() => {
     if (category) {
       getCategory(category);
     }
   }, [category]);
+
+  useEffect(() => {
+    if(categoryItem){
+      calculateTotalPerc()
+    }
+  }, [categoryItem]);
+
+  const calculateTotalPerc = () => {
+    let total = 0;
+    categoryItem?.CategoryItems?.forEach((item) => {
+      total = total + item.cost;
+    });
+    setTotalCost(total);
+    let perc = (total / categoryItem.assigned_budget) * 100;
+    if (perc > 100) {
+      perc = 100;
+    }
+    setPersen(perc);
+  };
 
   const getCategory = async (category) => {
     setLoading(true);
@@ -28,10 +49,8 @@ const CategoryDetails = () => {
     data && setLoading(false);
   };
 
-  
-
   return (
-    <View className=" mt-10 px-5">
+    <View className=" flex-1 mt-10 px-5">
       <View>
         <Ionicons name="arrow-back-circle" size={44} color="black" />
       </View>
@@ -47,7 +66,9 @@ const CategoryDetails = () => {
           </View>
           <View className=" flex flex-row items-center ml-2 justify-between flex-1">
             <View>
-              <Text className=" text-[20px] font-bold">{categoryItem?.name}</Text>
+              <Text className=" text-[20px] font-bold">
+                {categoryItem?.name}
+              </Text>
               <Text className=" text-[16px] font-medium text-gray-500">
                 {categoryItem?.CategoryItems?.length} Items
               </Text>
@@ -59,14 +80,26 @@ const CategoryDetails = () => {
         </View>
 
         <View className=" mt-4">
-            <View className="flex flex-row items-center justify-between">
-              <Text className=" text-[16px] font-semibold">$500</Text>
-              <Text className=" text-[16px] font-semibold">Total Budget : ${0}</Text>
-            </View>
-            <View className=" bg-gray-400 overflow-hidden mt-1 h-[15px] rounded-full w-full">
-                <View className=" w-[70%] h-full bg-blue-600"></View>
-            </View>
+          <View className="flex flex-row items-center justify-between">
+            <Text className=" text-[16px] font-semibold">${totalCost}</Text>
+            <Text className=" text-[16px] font-semibold">
+              Total Budget : ${categoryItem?.assigned_budget}
+            </Text>
+          </View>
+          <View className=" bg-gray-400 overflow-hidden mt-1 h-[15px] rounded-full w-full">
+            <View style={{width:persen+"%"}} className=" w-[70%] h-full bg-blue-600"></View>
+          </View>
         </View>
+      </View>
+      <View className=" absolute bottom-4 right-3">
+        <Link
+          href={{
+            pathname: "/add-category-item",
+            params: { category: category },
+          }}
+        >
+          <Ionicons name="add-circle" size={64} color="green" />
+        </Link>
       </View>
     </View>
   );
