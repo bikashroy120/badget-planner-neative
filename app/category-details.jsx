@@ -4,9 +4,11 @@ import {
   TouchableOpacity,
   ScrollView,
   RefreshControl,
+  Alert,
+  ToastAndroid,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "../utils/SupabaseConfig";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -19,7 +21,7 @@ const CategoryDetails = () => {
   const [totalCost, setTotalCost] = useState(0);
   const [persen, setPersen] = useState(0);
 
-  console.log("category", totalCost);
+  const router = useRouter()
 
   useEffect(() => {
     if (category) {
@@ -56,6 +58,34 @@ const CategoryDetails = () => {
     data && setLoading(false);
   };
 
+  const onDelete = () => {
+    Alert.alert("Are you sure", "Do you really went to Delete!", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Yes",
+        style: "destructive",
+        onPress: async () => {
+          const { error } = await supabase
+            .from("Category")
+            .delete()
+            .eq("category_id", category);
+
+             await supabase
+            .from("Category")
+            .delete()
+            .eq("id", category);
+
+            ToastAndroid.show("Category Delete!",ToastAndroid.SHORT)
+            router.replace("/(tabs)")
+
+        },
+      },
+    ]);
+  };
+
   return (
     <View className=" flex-1 mt-10 ">
       <View className="px-5">
@@ -90,7 +120,7 @@ const CategoryDetails = () => {
                   {categoryItem?.CategoryItems?.length} Items
                 </Text>
               </View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={()=>onDelete()}>
                 <MaterialIcons name="delete" size={30} color="red" />
               </TouchableOpacity>
             </View>
