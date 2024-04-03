@@ -54,7 +54,7 @@ export default function Page() {
           />
         }>
           <Header />
-          <CircularChart />
+          <CircularChart categoryItem={category}/>
           <CategoryList category={category} />
         </ScrollView>
       </View>
