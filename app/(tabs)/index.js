@@ -31,9 +31,7 @@ export default function Page() {
 
   const isLogin = async () => {
     const login = await services.getData("login");
-
     console.log(login);
-
     if (!login) {
       router.push("/login");
     }

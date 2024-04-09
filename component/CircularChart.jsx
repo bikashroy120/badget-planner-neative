@@ -73,7 +73,7 @@ const CircularChart = ({ categoryItem }) => {
               {categoryItem?.map(
                 (item, index) =>
                   index <= 4 && (
-                    <View className=" flex items-center gap-1 flex-row">
+                    <View key={index} className=" flex items-center gap-1 flex-row">
                       <View
                         className=" w-[20px] h-[20px] rounded-full "
                         style={{ backgroundColor: color[index] }}
