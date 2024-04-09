@@ -16,6 +16,7 @@ import { Feather } from "@expo/vector-icons";
 import { decode } from "base64-arraybuffer";
 import { supabase } from "../utils/SupabaseConfig";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { client } from "../utils/KindeConfig";
 
 const AddCategoryItems = () => {
   const [image, setImage] = useState(null);
@@ -47,6 +48,9 @@ const AddCategoryItems = () => {
   const handelClick = async () => {
     const fileName = Date.now();
     setLoading(true);
+
+    const getUser = await client.getUserDetails();
+
     const { data, error } = await supabase.storage
       .from("image")
       .upload(fileName + ".png", decode(upload), {
@@ -66,6 +70,18 @@ const AddCategoryItems = () => {
             note: note,
             icon: imageName,
             category_id: category,
+          },
+        ])
+        .select();
+
+        await supabase
+        .from("History")
+        .insert([
+          {
+            title: "Add new category Item",
+            note: `Add a new category item name ${name} and budget is ${cost}`,
+            budget: cost,
+            created_by: getUser.email,
           },
         ])
         .select();

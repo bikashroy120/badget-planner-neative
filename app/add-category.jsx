@@ -12,16 +12,19 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Foundation } from "@expo/vector-icons";
 import { client } from "../utils/KindeConfig";
 import { supabase } from "../utils/SupabaseConfig";
+import { useRouter } from "expo-router";
 
 const AddCategory = () => {
   const [color, setColor] = useState("#4f75fe");
   const [title, setTitle] = useState("");
   const [budget, setBudget] = useState("");
   const [icon, setIcon] = useState("IC");
+  const [loading,setLoading]=useState(false)
+  const router = useRouter()
 
   const onCreateCategory = async () => {
+    setLoading(true)
     const getUser = await client.getUserDetails();
-
     const { data, error } = await supabase
       .from("Category")
       .insert([
@@ -35,10 +38,34 @@ const AddCategory = () => {
       ])
       .select();
 
+     await supabase
+      .from("History")
+      .insert([
+        {
+          title: "Add new category",
+          note: `Add a new category name ${title} and budget is ${budget}`,
+          budget: budget,
+          created_by: getUser.email,
+        },
+      ])
+      .select();
+
+
+      if (data) {
+        setLoading(false);
+        ToastAndroid.show("Category Created", ToastAndroid.SHORT);
+        router.replace({
+          pathname:"/category-details",
+          params:{
+            category:data[0]?.id
+          }
+        })
+      }
+
     console.log(data);
-    if (data) {
-      ToastAndroid.show("Category Created", ToastAndroid.SHORT);
-    }
+    // if (data) {
+    //   ToastAndroid.show("Category Created", ToastAndroid.SHORT);
+    // }
   };
 
   return (
@@ -81,13 +108,13 @@ const AddCategory = () => {
       <View className="mt-5">
         <TouchableOpacity
           onPress={() => onCreateCategory()}
-          disabled={!title || !budget}
+          disabled={!title || !budget || loading}
           className={`py-3 rounded-md px-5 ${
             !title || !budget ? " bg-gray-500 " : " bg-blue-500"
           }`}
         >
           <Text className=" text-center text-white text-[20px] font-bold">
-            Create
+              {loading ? "Loading..." : "Create"}
           </Text>
         </TouchableOpacity>
       </View>
